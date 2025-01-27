@@ -7,6 +7,8 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import MainNavBar from './Header/MainNavBar';
 import SecondSection from './SecondSection/SecondSection';
 import ThirdSection from './ThirdSection/ThirdSection';
+import ExplorePakistan from './ExplorePakistan/ExplorePakistan';
+import PropertyCarousel from './PropertyCarousel/PropertyCarousel';
 
 
 function App() {
@@ -15,6 +17,8 @@ function App() {
   <MainNavBar/>
   <SecondSection/>
   <ThirdSection/>
+  <ExplorePakistan/>
+
     </div>
   );
 }
