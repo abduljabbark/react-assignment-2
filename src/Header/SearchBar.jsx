@@ -150,9 +150,9 @@ const SearchBar = () => {
         }}
       ></Box>
      <Box sx={{ display: "flex", alignItems: "center", flex: 1, gap: 1 }}>
-      <CalendarTodayIcon sx={{ color: "gray" }} />
+      <CalendarTodayIcon sx={{ color: "black" }} />
       <Typography
-        sx={{ fontSize: "14px", color: "gray" }}
+        sx={{ fontSize: "14px", color: "black" }}
         onClick={handleClick}
         style={{ cursor: "pointer" }}
       >

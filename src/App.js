@@ -16,16 +16,17 @@ import Inspiration from './Inspiration/Inspiration';
 import UniqueProperties from './UniqueProperties/UniqueProperties';
 import WeekendDeals from './WeekendDeals/WeekendDeals';
 import FirstFooter from './Footer1/Footer1';
-import DatePicker from './DateChelender/DateChelender';
+import TrendingDestinations from './TrendingDestinations/TrendingDestinations';
 
 
 function App() {
   return (
     <div>
   <MainNavBar/>
-<DatePicker/>
+
   <SecondSection/>
   <WeekendDeals/>
+  <TrendingDestinations/>
   <UniqueProperties/>
   <Inspiration/>
   <ThirdSection/>
