@@ -1,12 +1,20 @@
 import React, { useState } from "react";
-import { Box, Button, TextField, Typography, Divider, Switch, Menu, MenuItem } from "@mui/material";
+import { Box, Button, TextField, Typography, Divider, Switch, Menu, MenuItem, InputLabel, Select, FormControl } from "@mui/material";
 import BedIcon from "@mui/icons-material/Bed";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import PersonIcon from "@mui/icons-material/Person";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { LocalizationProvider, DesktopDatePicker } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import Popover from "@mui/material/Popover";
+import { DateRangePicker } from "@mui/x-date-pickers-pro";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+
 
 const SearchBar = () => {
+  const [selectedOption, setSelectedOption] = useState("Cleaner");
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [rooms, setRooms] = useState(1);
@@ -14,12 +22,31 @@ const SearchBar = () => {
   const [travelingWithPets, setTravelingWithPets] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null); // Anchor for destination dropdown
   const [selectedDestination, setSelectedDestination] = useState("");
-  
+  const [dateDropdownOpen, setDateDropdownOpen] = useState(false); // State for date dropdown visibility
+  const [selectedDate, setSelectedDate] = useState(null); // State for the selected date
+  const [dateAnchorEl, setDateAnchorEl] = useState(null);
+  const [dateRange, setDateRange] = useState([null, null]); // State for date range picker
+  const open = Boolean(dateAnchorEl);
+  const id = open ? "date-popover" : undefined;
+
+  // Handle Date Popover Open
+  const handleClick = (event) => {
+    setDateAnchorEl(event.currentTarget);
+  };
+
+  // Handle Date Popover Close
+  const handleClose = () => {
+    setDateAnchorEl(null);
+  };
+
   const destinations = ["New York", "Paris", "Tokyo", "London"];
   const country = "USA"; // Example country
-  
+
   // Toggle guest dropdown
   const toggleGuestDropdown = () => setGuestDropdownOpen((prev) => !prev);
+
+  // Toggle date dropdown visibility
+  const toggleDateDropdown = () => setDateDropdownOpen((prev) => !prev);
 
   // Increment value function
   const increment = (setState, stateValue) => setState(stateValue + 1);
@@ -35,6 +62,11 @@ const SearchBar = () => {
   const handleDestinationClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+  // Format selected date range
+  const formattedDate =
+    dateRange[0] && dateRange[1]
+      ? `${dayjs(dateRange[0]).format("DD/MM/YYYY")} - ${dayjs(dateRange[1]).format("DD/MM/YYYY")}`
+      : "Check-in Date — Check-out Date";
 
   // Close destination dropdown
   const handleDropdownClose = () => {
@@ -45,6 +77,16 @@ const SearchBar = () => {
   const handleMenuClose = (destination) => {
     setSelectedDestination(destination);
     handleDropdownClose();
+  };
+
+  // Handle Option Change
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
+  // Handle date change
+  const handleDateChange = (newDate) => {
+    setSelectedDate(newDate);
   };
 
   return (
@@ -66,7 +108,7 @@ const SearchBar = () => {
       {/* Destination Dropdown Menu */}
       <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
         <BedIcon sx={{ color: "black" }} />
-        <Button onClick={handleDestinationClick} sx={{ fontSize: "14px", color: "black",flexGrow: 1 }}>
+        <Button onClick={handleDestinationClick} sx={{ fontSize: "14px", color: "black", flexGrow: 1 }}>
           {selectedDestination || "Where are you going?"} {selectedDestination && country && `, ${country}`}
         </Button>
         <KeyboardArrowDownIcon sx={{ color: "black" }} />
@@ -107,14 +149,45 @@ const SearchBar = () => {
           marginX: "10px",
         }}
       ></Box>
+     <Box sx={{ display: "flex", alignItems: "center", flex: 1, gap: 1 }}>
+      <CalendarTodayIcon sx={{ color: "gray" }} />
+      <Typography
+        sx={{ fontSize: "14px", color: "gray" }}
+        onClick={handleClick}
+        style={{ cursor: "pointer" }}
+      >
+        {formattedDate}
+      </Typography>
 
-      {/* Check-in/Check-out Date */}
-      <Box sx={{ display: "flex", alignItems: "center", flex: 1, gap: 1 }}>
-        <CalendarTodayIcon sx={{ color: "gray" }} />
-        <Typography sx={{ fontSize: "14px", color: "gray" }}>
-          Check-in Date — Check-out Date
-        </Typography>
-      </Box>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={dateAnchorEl}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      >
+        <Box sx={{ padding: "16px", minWidth: "300px" }}>
+          <Typography variant="h6">Select Your Dates</Typography>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateRangePicker
+              localeText={{ start: "Start date", end: "End date" }}
+              value={dateRange}
+              onChange={(newValue) => setDateRange(newValue)}
+            />
+          </LocalizationProvider>
+          <Divider sx={{ my: 2 }} />
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={handleClose}
+            sx={{ mt: 2, backgroundColor: "#0066cc", color: "white", "&:hover": { backgroundColor: "#005bb5" } }}
+          >
+            Done
+          </Button>
+        </Box>
+      </Popover>
+    </Box>
+
 
       {/* Divider */}
       <Box
@@ -127,10 +200,7 @@ const SearchBar = () => {
       ></Box>
 
       {/* Guests and Rooms */}
-      <Box
-        sx={{ display: "flex", alignItems: "center", flex: 1, cursor: "pointer" }}
-        onClick={toggleGuestDropdown}
-      >
+      <Box sx={{ display: "flex", alignItems: "center", flex: 1, cursor: "pointer" }} onClick={toggleGuestDropdown}>
         <PersonIcon sx={{ color: "black" }} />
         <Typography sx={{ fontSize: "14px", color: "black", flexGrow: 1 }}>
           {adults} adults · {children} children · {rooms} room
@@ -188,10 +258,7 @@ const SearchBar = () => {
           {/* Pets Option */}
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Typography>Traveling with pets?</Typography>
-            <Switch
-              checked={travelingWithPets}
-              onChange={() => setTravelingWithPets(!travelingWithPets)}
-            />
+            <Switch checked={travelingWithPets} onChange={() => setTravelingWithPets(!travelingWithPets)} />
           </Box>
 
           <Typography variant="body2" sx={{ mt: 1, color: "gray" }}>
@@ -223,11 +290,8 @@ const SearchBar = () => {
           backgroundColor: "#0066cc",
           color: "white",
           padding: "10px 20px",
-          borderRadius: "5px",
-          marginLeft: "10px",
-          "&:hover": {
-            backgroundColor: "#005bb5",
-          },
+          borderRadius: "8px",
+          "&:hover": { backgroundColor: "#005bb5" },
         }}
       >
         Search

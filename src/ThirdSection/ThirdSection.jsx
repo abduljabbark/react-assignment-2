@@ -4,7 +4,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Slider from "react-slick";
 import Karachi from "../images/secondsection.jpeg"
-import { hover } from "@testing-library/user-event/dist/hover";
+
 // Dummy data for cities
 const cities = [
   {
